@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
 $border-color: #ddd;
 $white: #fff;
 $black: #000;
@@ -9,6 +11,7 @@ $border-radius: 5px;
 }
 
 body {
+  font-family: 'Roboto', sans-serif;
   background-color: #F5F5F5;
   font-size: 14px;
 }
@@ -32,6 +35,15 @@ body {
       background-color: darken($primary, 3%);
     }
   }
+
+  &--disabled {
+    opacity: .8;
+    pointer-events: none;
+  }
+}
+
+.text-center {
+  text-align: center;
 }
 
 .app {
@@ -90,6 +102,8 @@ body {
   &__item {
     align-items: center;
     border-bottom: 1px solid $border-color;
+    background-color: $white;
+    cursor: move;
     display: flex;
 
     &:last-child {
@@ -146,6 +160,7 @@ body {
       align-items: center;
       border-radius: $border-radius;
       border: 1px solid $border-color;
+      cursor: pointer;
       display: inline-flex;
       height: 20px;
       justify-content: center;
@@ -255,6 +270,17 @@ body {
       margin-left: 10px;
     }
   }
+}
+
+.flip-list-move {
+  transition: transform 0.5s;
+}
+.no-move {
+  transition: transform 0s;
+}
+.ghost {
+  opacity: 0.5;
+  background: #ccc;
 }
 
 @keyframes animatetop {

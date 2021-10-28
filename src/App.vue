@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <SortingSystem msg="Welcome to Your Vue.js App"/>
+    <SortingSystem />
   </div>
 </template>
 
@@ -15,9 +15,3 @@ export default {
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-}
-</style>
