@@ -8,7 +8,14 @@
     </div>
     <div class="container">
       <div v-if="users.length"
-           class="list__info">{{ users.length }} peoples in the list</div>
+           class="list__info">
+        <div>
+          <template v-if="escapedTime">
+            Escaped time: {{ escapedTime }}
+          </template>
+        </div>
+        <div>{{ users.length }} peoples in the list</div>
+      </div>
       <div class="list__head">
         <div class="list__data list__data--email">Email</div>
         <div class="list__data list__data--count">Potatoes</div>
@@ -120,6 +127,8 @@ export default {
         success: false,
       },
       time: null,
+      timer: null,
+      escapedTime: null,
       move: 0,
       order: [],
       users: [],
@@ -127,8 +136,6 @@ export default {
       message: '',
       api: 'https://dummyapi.io/data/v1/user',
     };
-  },
-  mounted() {
   },
   methods: {
     /**
@@ -182,9 +189,42 @@ export default {
 
       this.users = users;
       this.order = [...order].sort((a, b) => (b - a));
-
-      this.time = Date.now();
+      this.time  = Date.now();
+      this.timer = setInterval(this.setEscapedTime, 1000);
       this.modals.start = false;
+    },
+
+    /**
+     * Start pad with 0
+     * 
+     * @param {String|Number} value
+     * 
+     * @return {String}
+     */
+    startPad(value) {
+      return value.toString().padStart(2, '0');
+    },
+
+    /**
+     * Set escaped time
+     */
+    setEscapedTime() {
+      let TIME_LENGTHS  = [3600, 60, 1]
+      let messageJoins  = [];
+      let diffInSeconds = parseInt((Date.now() - this.time) / 1000)
+      
+      for (let tl of TIME_LENGTHS) {
+        let num_of_times = 0;
+
+        if (diffInSeconds >= tl) {
+          num_of_times  = (diffInSeconds / tl).toFixed(0);
+          diffInSeconds = diffInSeconds % tl;
+        }
+
+        messageJoins.push(this.startPad(num_of_times));
+      }
+
+      this.escapedTime = messageJoins.join(':');
     },
 
     /**
@@ -195,25 +235,16 @@ export default {
      * @return {String}
      */
     getReadableTimeFromNow(start) {
-      let MILISECONDS = 1000;
-      let YEAR_IN_SECONDS = 31536000;
-      let MONTHS_IN_SECONDS = 2592000;
-      let DAY_IN_SECONDS = 86400;
-      let HOUR_IN_SECONDS = 3600;
-      let MINUTES_IN_SECONDS = 60;
-
       let TIME_LENGTHS = [
-        {seconds: YEAR_IN_SECONDS, term: 'years'},
-        {seconds: MONTHS_IN_SECONDS, term: 'months'},
-        {seconds: DAY_IN_SECONDS, termterm: 'days'},
-        {seconds: HOUR_IN_SECONDS, term: 'hours'},
-        {seconds: MINUTES_IN_SECONDS, term: 'minutes'},
+        {seconds: 31536000, term: 'years'},
+        {seconds: 2592000, term: 'months'},
+        {seconds: 86400, termterm: 'days'},
+        {seconds: 3600, term: 'hours'},
+        {seconds: 60, term: 'minutes'},
         {seconds: 1, term: 'seconds'}
       ];
-
-      let messageJoins = [];
-      let now = new Date();
-      let diffInSeconds = parseInt((now.getTime() - start.getTime()) / MILISECONDS)
+      let messageJoins  = [];
+      let diffInSeconds = parseInt((Date.now() - start.getTime()) / 1000)
       
       for (let tl of TIME_LENGTHS) {
         if (diffInSeconds >= tl.seconds) {
@@ -234,7 +265,7 @@ export default {
      * Check wheather sorting done or not
      */
     checkOrder() {
-      let ordered =  this.users.every((user, index) => (this.order[index] === user.potatoes));
+      let ordered = this.users.every((user, index) => (this.order[index] === user.potatoes));
 
       this.move++;
 
@@ -242,8 +273,11 @@ export default {
         return;
       }
 
+      clearInterval(this.timer);
+
       this.message = this.getReadableTimeFromNow(new Date(this.time));
       this.modals.success = true;
+      this.escapedTime = '';
     },
 
     /**
@@ -259,12 +293,16 @@ export default {
      * Reset necessary data to default value
      */
     reset() {
-      this.time    = null;
-      this.move    = 0;
-      this.order   = [];
-      this.users   = [];
-      this.limit   = 20;
-      this.message = '';
+      clearInterval(this.timer);
+
+      this.time        = null;
+      this.timer       = null;
+      this.escapedTime = null;
+      this.move        = 0;
+      this.order       = [];
+      this.users       = [];
+      this.limit       = 20;
+      this.message     = '';
     },
   }
 }
