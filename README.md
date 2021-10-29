@@ -1,24 +1,2 @@
-# demo-sorting-training-system
-
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# Demo Sorting Training System
+See [Live preview](https://sonjoy-s.github.io/demo-sorting-training-system/)
